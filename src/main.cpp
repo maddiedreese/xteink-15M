@@ -87,8 +87,7 @@ void appendPiece(int token) {
 }
 
 void show() {
-  if (!dirty || !display.framebufferReady() || display.refreshBusy()) return;
-  display.waitRefreshComplete();
+  if (!dirty || !display.framebufferReady()) return;
   Screen screen(display.getFrameBuffer());
   screen.clear();
   screen.text(Margin, 30, "TINY STORIES", 4);
@@ -134,15 +133,14 @@ void show() {
       screen.text(Margin, 755, "BACK EDIT  /  OK AGAIN", 2);
     }
   }
-  if (!refreshes || refreshes % 30 == 0) display.displayBuffer(EInkDisplay::HALF_REFRESH);
-  else display.displayBufferAsyncNoShadow(EInkDisplay::FAST_REFRESH);
+  // Blocking refresh reseeds the SSD1677's previous-frame RAM without a second framebuffer.
+  display.displayBuffer(refreshes % 30 == 0 ? EInkDisplay::HALF_REFRESH : EInkDisplay::FAST_REFRESH);
   ++refreshes;
   dirty = false;
 }
 
 void sleepNow() {
   if (display.framebufferReady()) {
-    display.waitRefreshComplete();
     Screen screen(display.getFrameBuffer());
     screen.clear();
     screen.center(240, 343, "TINY STORIES", 3);
