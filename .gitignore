@@ -1,0 +1,7 @@
+/.pio/
+/assets/
+/upstream/
+/dist/
+/.venv/
+/tests/smoke
+__pycache__/
